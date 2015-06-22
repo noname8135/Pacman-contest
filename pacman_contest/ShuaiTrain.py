@@ -10,7 +10,7 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-debug = False
+debug = True
 #python capture.py -r myTeam -redOpts first=ShuaiAgent,second=ShuaiAgent
 from game import Agent
 from captureAgents import CaptureAgent
@@ -69,14 +69,14 @@ class ShuaiAgent(CaptureAgent):
 	self.opponents = self.getOpponents(gameState)
 	self.opponents[0]
 	self.teammate = self.getTeammate()
-	f = open('data/input_data','r')
-	self.factors = [int(i) for i in f.read().replace('\n','').split(' ')]
-	print 'factor', self.factors
+	#f = open("data/input_data",r)
+	#factors_in_file = [int (i) for i in f.read().split(",")]
+	#self.factors = zip(range(0,len(factors_in_file)),factors_in_file)
 	self.is_ghost = True
 	self.carryingFood = 0 #food you are carrying
 
 	if self.red:
-	  self.middle_line = gameState.data.layout.width/2-1
+	  self.middle_line = gameState.data.layout.width/2-1 
 	else:
 	  self.middle_line = gameState.data.layout.width/2
 	self.dangerousness = self.getDangerousness(gameState)
@@ -121,6 +121,15 @@ class ShuaiAgent(CaptureAgent):
 	futureState = self.getSuccessor(gameState,action)
 	weights = self.getWeights(gameState,futureState)
 	features = self.getFeatures(gameState,futureState)
+	'''
+	if debug:
+		print "Future!",action
+		print futureState.getAgentState(self.index)
+		print futureState.data
+		print "present!"
+		print gameState.getAgentState(self.index)
+		print gameState.data
+	'''
 	state_score = 0
 	for item_name in features:
 		state_score += weights[item_name] * features[item_name]
@@ -141,33 +150,33 @@ class ShuaiAgent(CaptureAgent):
 			Weights['op_dist'] = 0
 			Weights['op_dist2'] = 0
 		else:
-			Weights['op_dist'] = self.factors[0]  					#xx
-			Weights['op_dist2'] = self.factors[1] 					#xx
-		Weights['food_dist'] = self.factors[2]						#xx
-		Weights['food_dist2'] = self.factors[3]						#xx
-		Weights['dangerousness'] = self.factors[4] 					#xx
+			Weights['op_dist'] = 100  					#xx
+			Weights['op_dist2'] = 5 					#xx
+		Weights['food_dist'] = -30						#xx
+		Weights['food_dist2'] = -2 						#xx
+		Weights['dangerousness'] = -50 					#xx
 		if not self.is_attacker:
 			Weights['mid'] = 0
 		elif self.at_home(futureState):
-			Weights['mid'] = self.factors[5]						#xx
+			Weights['mid'] = -10						#xx
 		elif self.beingChased() > 3:					#if being chased, go home quickly
-			Weights['mid'] = self.beingChased() * self.factors[6] + (gameState.data.timeleft/self.factors[7])	#xx  xx
+			Weights['mid'] = self.beingChased() * -8 + (gameState.data.timeleft/10)	#xx  xx
 		else:
-			Weights['mid'] = self.carryingFood * self.factors[8] + (gameState.data.timeleft/self.factors[9])  #xx  xx
+			Weights['mid'] = self.carryingFood * -4 + (gameState.data.timeleft/10)  #xx  xx
 			
-		Weights['foodNextStep'] = self.factors[10] * 50					#xx
-		Weights['dieNextStep'] = self.factors[11] * 50				#xx
-		Weights['conFood'] = self.factors[12]							#xx
+		Weights['foodNextStep'] = 1500					#xx
+		Weights['dieNextStep'] = -1000					#xx
+		Weights['conFood'] = 5 							#xx
 		Weights['killNext'] = 0
 	else:
 		Weights['conFood'] = 0
-		Weights['killNext'] = self.factors[13] * 50				#xx xx
-		Weights['op_dist'] = self.factors[14] * 50 					#xx
-		Weights['op_dist2'] = self.factors[15]						#xx
+		Weights['killNext'] = 5000 * 100				#xx xx
+		Weights['op_dist'] = -500						#xx
+		Weights['op_dist2'] = 5 						#xx
 		Weights['food_dist'] = 0
 		Weights['food_dist2'] = 0
 		if self.getMidfeature(gameState,futureState) > 3:
-			Weights['mid'] = self.factors[16] * 50						#xx
+			Weights['mid'] = -1000						#xx
 		else:
 			Weights['mid'] = 0
 		Weights['foodNextStep'] = 0
@@ -216,6 +225,7 @@ class ShuaiAgent(CaptureAgent):
       return successor
 
   def killNext(self,gameState,futureState):
+  	print self.opponents[0]
   	if gameState.getAgentPosition(self.opponents[0]) == futureState.getAgentPosition(self.index) or gameState.getAgentPosition(self.opponents[1]) == futureState.getAgentPosition(self.index):
   		return 1
   	return 0

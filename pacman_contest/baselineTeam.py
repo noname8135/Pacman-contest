@@ -75,7 +75,6 @@ class ReflexCaptureAgent(CaptureAgent):
 
     maxValue = max(values)
     bestActions = [a for a, v in zip(actions, values) if v == maxValue]
-
     foodLeft = len(self.getFood(gameState).asList())
 
     if foodLeft <= 2:

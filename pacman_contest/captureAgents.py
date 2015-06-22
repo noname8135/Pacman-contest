@@ -264,7 +264,7 @@ class CaptureAgent(Agent):
     """
     return self.observationHistory[-1]
 
-  def displayDistributionsOverPositions(self, distributions):
+  def displayDistributionsOvers(self, distributions):
     """
     Overlays a distribution over positions onto the pacman board that represents
     an agent's beliefs about the positions of each agent.

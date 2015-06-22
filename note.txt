@@ -1,3 +1,5 @@
+python capture.py -r ShuaiTeam -l contest01Capture.lay
+
 
   -r RED, -b BLUE [Default: baselineTeam]
   --redOpts=REDOPTS, --blueOpts=BLUEOPTS     agent in team (e.g. first=keys) [Default: ]
@@ -20,20 +22,6 @@
 Each strategy (next section) will give a value
 Use GA on every weight of strategy, each individual is a list 
 of weight. 
-
-
------------------self defined strategy---------------------
-time
-
-for attack:
-	to food distance 
-
-pacman_run_home
-pacman_defend
-pacman_attack
-ghost_attack
-ghost_defense
-ghost_escape
 
 -----------------strategy--------------------------------
 
