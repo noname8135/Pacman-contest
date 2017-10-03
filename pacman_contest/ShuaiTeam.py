@@ -67,11 +67,9 @@ class ShuaiAgent(CaptureAgent):
 	else:
 		self.is_attacker = False
 	self.opponents = self.getOpponents(gameState)
-	self.opponents[0]
 	self.teammate = self.getTeammate()
 	f = open('data/input_data','r')
 	self.factors = [int(i) for i in f.read().replace('\n','').split(' ')]
-	print 'factor', self.factors
 	self.is_ghost = True
 	self.carryingFood = 0 #food you are carrying
 
@@ -151,17 +149,23 @@ class ShuaiAgent(CaptureAgent):
 		elif self.at_home(futureState):
 			Weights['mid'] = self.factors[5]						#xx
 		elif self.beingChased() > 3:					#if being chased, go home quickly
-			Weights['mid'] = self.beingChased() * self.factors[6] + (gameState.data.timeleft/self.factors[7])	#xx  xx
+			if self.factors[7] != 0:
+				Weights['mid'] = self.beingChased() * self.factors[6] + (gameState.data.timeleft/self.factors[7])	#xx  xx
+			else:
+				Weights['mid'] = self.beingChased() * self.factors[6]
 		else:
-			Weights['mid'] = self.carryingFood * self.factors[8] + (gameState.data.timeleft/self.factors[9])  #xx  xx
+			if self.factors[9] != 0:
+				Weights['mid'] = self.carryingFood * self.factors[8] + (gameState.data.timeleft/self.factors[9])  #xx  xx
+			else: 
+				Weights['mid'] = self.carryingFood * self.factors[8]
 			
-		Weights['foodNextStep'] = self.factors[10] * 50					#xx
+		Weights['foodNextStep'] = self.factors[10] * 50				#xx
 		Weights['dieNextStep'] = self.factors[11] * 50				#xx
-		Weights['conFood'] = self.factors[12]							#xx
+		Weights['conFood'] = self.factors[12]						#xx
 		Weights['killNext'] = 0
 	else:
 		Weights['conFood'] = 0
-		Weights['killNext'] = self.factors[13] * 50				#xx xx
+		Weights['killNext'] = self.factors[13] * 500					#xx xx
 		Weights['op_dist'] = self.factors[14] * 50 					#xx
 		Weights['op_dist2'] = self.factors[15]						#xx
 		Weights['food_dist'] = 0
@@ -414,7 +418,9 @@ class ShuaiAgent(CaptureAgent):
 	  elif state[next] == 0:
 		state[next] = state[walker]-1 
 	  walker = next
-	  if directions[0] == 'N':
+	  if len(directions) == 0:
+	  	break
+	  elif directions[0] == 'N':
 		dir_from = 'S'
 	  elif directions[0] == 'S':
 		dir_from = 'N'
