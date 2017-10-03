@@ -1,5 +1,3 @@
-agent junkumar  https://github.com/junkumar/pactureflag/commits/master/
-
 python capture.py -r ShuaiTeam -l contest01Capture.lay
 
 
